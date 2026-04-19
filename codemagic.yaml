@@ -1,10 +1,8 @@
 workflows:
-  ios-testflight-ipa:
-    name: iOS TestFlight IPA
+  ios-simulator-build:
+    name: iOS Simulator Build
     max_build_duration: 60
     instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: KMG_APP_STORE_CONNECT
     environment:
       node: latest
       xcode: latest
@@ -25,24 +23,27 @@ workflows:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-      - name: Initialize keychain
+      - name: Build unsigned simulator app
         script: |
-          keychain initialize
-      - name: Fetch Apple signing files
-        script: |
-          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
-      - name: Add certificates to keychain
-        script: |
-          keychain add-certificates
-      - name: Apply provisioning profiles
-        script: |
-          xcode-project use-profiles
-      - name: Build signed IPA
-        script: |
-          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+          set -o pipefail
+          mkdir -p /tmp/xcodebuild_logs build/ios/simulator
+          xcodebuild build \
+            -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee /tmp/xcodebuild_logs/ios-simulator.log
+          APP_PATH=$(find "$HOME/Library/Developer/Xcode/DerivedData" -path "*/Build/Products/Debug-iphonesimulator/*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No simulator .app artifact found"
+            exit 1
+          fi
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ios/simulator/KawaiiMixer-simulator.app.zip
     artifacts:
-      - build/ios/ipa/*.ipa
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
+      - build/ios/simulator/*.zip
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - /tmp/xcodebuild_logs/*.log
