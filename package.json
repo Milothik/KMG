@@ -1,0 +1,16 @@
+{
+  "name": "kawaii-mixer-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mobile-first Kawaii Mixer Game prototype with Bubble Chart mixing and Perfupedia persistence.",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node server.js",
+    "prepare:ios-web": "node scripts/prepare-ios-web.mjs"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.3.1",
+    "@capacitor/core": "8.3.1",
+    "@capacitor/ios": "8.3.1"
+  }
+}

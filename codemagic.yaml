@@ -1,0 +1,47 @@
+workflows:
+  ios-adhoc-ipa:
+    name: iOS Ad Hoc IPA
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: KMG_APP_STORE_CONNECT
+    environment:
+      node: latest
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.kawaiimixer.game
+      vars:
+        BUNDLE_ID: com.kawaiimixer.game
+        XCODE_WORKSPACE: ios/App/App.xcworkspace
+        XCODE_SCHEME: App
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm ci || npm install
+      - name: Prepare web assets
+        script: |
+          npm run prepare:ios-web
+      - name: Generate Capacitor iOS project
+        script: |
+          rm -rf ios
+          npx cap add ios
+          npx cap sync ios
+      - name: Initialize keychain
+        script: |
+          keychain initialize
+      - name: Fetch Apple signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_ADHOC --create
+      - name: Add certificates to keychain
+        script: |
+          keychain add-certificates
+      - name: Apply provisioning profiles
+        script: |
+          xcode-project use-profiles
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa

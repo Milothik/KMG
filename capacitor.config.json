@@ -1,0 +1,8 @@
+{
+  "appId": "com.kawaiimixer.game",
+  "appName": "Kawaii Mixer Game",
+  "webDir": "ios-web",
+  "ios": {
+    "scheme": "Kawaii Mixer Game"
+  }
+}

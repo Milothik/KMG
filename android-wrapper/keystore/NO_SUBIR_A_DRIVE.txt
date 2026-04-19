@@ -1,0 +1,9 @@
+Esta carpeta contiene la clave release de Kawaii Mixer Game.
+
+Guarda el archivo kawaii-mixer-release.keystore en privado.
+No lo subas a Drive, WhatsApp, Telegram ni se lo envies a nadie.
+
+Alias: kawaii_mixer_release
+
+Para actualizar la app instalada en Android, las futuras APK deben firmarse con esta misma clave.
+Si pierdes esta clave, Android tratara las futuras versiones como otra firma distinta y no podran actualizar la app ya instalada.

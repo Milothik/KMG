@@ -1,0 +1,10 @@
+node_modules/
+ios/
+ios-web/
+dist/
+ESTO ES LA APP/
+android-wrapper/keystore/*.keystore
+*.apk
+*.idsig
+*.zip
+.DS_Store

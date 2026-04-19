@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kawaii Mixer Game</title>
+  <link rel="icon" type="image/x-icon" href="./assets/images/kawaii_mixer_game_logo.ico">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body class="screen-home">
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
+  <img id="appBackgroundImg" class="app-background" src="./assets/images/Fondo.png" alt="" aria-hidden="true">
+  <div class="audio-controls" aria-label="Controles de audio">
+    <button class="audio-toggle" id="musicToggleBtn" type="button" aria-label="Desactivar música" aria-pressed="true"><span>MUS</span><b>ON</b></button>
+    <button class="audio-toggle" id="sfxToggleBtn" type="button" aria-label="Desactivar efectos" aria-pressed="true"><span>FX</span><b>ON</b></button>
+  </div>
+  <div class="app-shell">
+    <header class="topbar">
+      <img id="logoImg" class="logo logo-home-link" src="./assets/images/Logo.png" alt="Kawaii Mixer Game" role="button" tabindex="0" title="Volver al menú">
+      <div class="topbar-copy">
+        <p class="eyebrow" id="phaseLabel">Pedido nuevo</p>
+        <h1 id="orderTitle">Kawaii Mixer Game</h1>
+        <p id="orderClient">Mezcla notas adorables para crear el perfume perfecto.</p>
+        <button class="order-random-btn" id="randomOrderBtn" type="button" aria-label="Cambiar a otro pedido aleatorio" title="Cambiar pedido">⇆</button>
+      </div>
+      <div class="topbar-actions">
+        <button class="ghost-button image-button small-art-button" id="headerPediaBtn" type="button">
+          <img id="headerPediaArt" class="button-art" src="./assets/images/Perfupedia-btn.png" alt="" aria-hidden="true">
+          <span class="visually-hidden">Perfupedia</span>
+        </button>
+        <button class="ghost-button image-button small-art-button" id="headerCaptiveBtn" type="button">
+          <img id="headerCaptiveArt" class="button-art" src="./assets/images/Cautivos-btn.png" alt="" aria-hidden="true">
+          <span class="visually-hidden">Mixer de Cautivos</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="screen active" id="homeScreen" aria-labelledby="homeTitle">
+        <div class="home-card">
+          <img id="homeLogoImg" class="home-logo" src="./assets/images/Logo.png" alt="Kawaii Mixer Game">
+          <h2 id="homeTitle" class="visually-hidden">Kawaii Mixer Game</h2>
+          <div class="action-row single-action">
+            <button class="main-button image-button" id="newGameBtn" type="button">
+              <img id="newGameArt" class="button-art" src="./assets/images/Empezar-btn.png" alt="" aria-hidden="true">
+              <span class="visually-hidden">Empezar partida</span>
+            </button>
+          </div>
+          <span class="build-version" id="buildVersion">v1.3</span>
+        </div>
+      </section>
+
+      <section class="screen" id="menuScreen" aria-labelledby="menuTitle">
+        <div class="menu-card">
+          <h2 id="menuTitle" class="visually-hidden">Menú principal</h2>
+          <button class="main-button image-button" id="playBtn" type="button">
+            <img id="playArt" class="button-art" src="./assets/images/Jugar-btn.png" alt="" aria-hidden="true">
+            <span class="visually-hidden">Jugar</span>
+          </button>
+          <div class="menu-action-row">
+            <button class="ghost-button image-button small-art-button" id="pediaBtn" type="button">
+              <img id="pediaArt" class="button-art" src="./assets/images/Perfupedia-btn.png" alt="" aria-hidden="true">
+              <span class="visually-hidden">Perfupedia</span>
+            </button>
+            <button class="ghost-button image-button small-art-button" id="captiveBtn" type="button">
+              <img id="captiveArt" class="button-art" src="./assets/images/Cautivos-btn.png" alt="" aria-hidden="true">
+              <span class="visually-hidden">Mixer de Cautivos</span>
+            </button>
+            <button class="ghost-button image-button small-art-button" id="elaborationsBtn" type="button">
+              <img id="elaborationsArt" class="button-art" src="./assets/images/Elaboraciones-btn.png" alt="" aria-hidden="true">
+              <span class="visually-hidden">Elaboraciones</span>
+            </button>
+            <button class="ghost-button image-button family-art-button" id="familyBtn" type="button">
+              <img id="familyArt" class="button-art" src="./assets/images/La Familia del Mezclador.png" alt="" aria-hidden="true">
+              <span class="visually-hidden">La Familia del Mezclador</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="introScreen" aria-labelledby="introTitle">
+        <div class="order-stage">
+          <div class="client-portrait" id="clientPortrait" aria-hidden="true">
+            <img id="clientPortraitImg" class="client-art" src="./assets/images/C-CLARA.png" alt="">
+          </div>
+          <div class="speech-card">
+            <p class="eyebrow">Pedido</p>
+            <h2 id="introTitle">Bruma de jardín</h2>
+            <div class="speech-bubble">
+              <p id="introDesc">Fresco, floral y suave.</p>
+            </div>
+            <p class="emotion-brief" id="emotionBrief">Quiere sentirse tranquila.</p>
+            <div class="tag-row" id="introTags"></div>
+          </div>
+        </div>
+        <div class="action-row single-action">
+          <button class="main-button image-button hidden-until-ready" id="startMemoryBtn" type="button">
+            <img id="startMemoryArt" class="button-art" src="./assets/images/Empezar-btn.png" alt="" aria-hidden="true">
+            <span class="visually-hidden">Empezar</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="screen" id="memoryScreen" aria-labelledby="memoryTitle">
+        <div class="panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Fase 1</p>
+              <h2 id="memoryTitle">Memory de gotitas</h2>
+            </div>
+            <button class="ghost-button" id="restartMemoryBtn" type="button">Reiniciar</button>
+          </div>
+          <div class="stats-grid">
+            <div><strong id="pairsStat">0/4</strong><span>parejas</span></div>
+            <div><strong id="streakStat">x0</strong><span>racha</span></div>
+            <div><strong id="timerStat">20s</strong><span>tiempo</span></div>
+            <div><strong id="dropsStat">0</strong><span>gotitas</span></div>
+          </div>
+          <div class="timer-track"><span id="timerFill"></span></div>
+          <div class="memory-board" id="memoryBoard"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="mixScreen" aria-labelledby="mixTitle">
+        <div class="mix-layout">
+          <section class="panel lab-panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" id="mixPhaseEyebrow">Fondo</p>
+                <h2 id="mixTitle">Bubble Chart</h2>
+              </div>
+              <span class="pill" id="filledBadge">0/5</span>
+            </div>
+            <div class="mix-playfield">
+              <div class="phase-bottle-layer" id="phaseCoreLayer" aria-hidden="true"></div>
+              <div class="bubble-chart" id="bubbleChart" aria-label="Frasco de mezcla"></div>
+              <div class="note-dock" aria-label="Massnotas disponibles">
+                <div class="note-tray" id="noteTray" aria-label="Massnotas disponibles"></div>
+              </div>
+            </div>
+            <div class="aliquot-dock">
+              <div>
+                <p class="eyebrow">Alícuota</p>
+                <h2 id="selectedNoteLabel">Elige una nota</h2>
+              </div>
+              <div class="aliquot-row" id="aliquotRow"></div>
+            </div>
+            <div class="action-row compact mix-action-row">
+              <button class="soft-button" id="refineBtn" type="button">Refinar</button>
+              <button class="soft-button" id="lastTouchBtn" type="button">Último toque</button>
+              <button class="soft-button" id="clearBtn" type="button">Vaciar</button>
+              <button class="main-button" id="evaluateBtn" type="button">Presentar</button>
+            </div>
+            <div class="last-touch-menu" id="lastTouchMenu" aria-hidden="true">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Último toque</p>
+                  <h2>Elige cautivo</h2>
+                </div>
+                <button class="ghost-button" id="closeLastTouchBtn" type="button">Cerrar</button>
+              </div>
+              <div class="last-touch-choices" id="lastTouchChoices"></div>
+            </div>
+          </section>
+
+          <aside class="side-stack">
+            <section class="panel read-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Lectura</p>
+                  <h2>Acorde actual</h2>
+                </div>
+                <span class="pill" id="dominantBadge">sin notas</span>
+              </div>
+              <div class="quick-read">
+                <span class="pill" id="auraBadge">aura dormida</span>
+                <span class="pill" id="riskBadge">estable</span>
+              </div>
+              <div class="trait-list" id="traitList"></div>
+              <p class="fineprint" id="maggicHint">Toca burbuja y Massnota. Si falta materia, Maggic puede ayudarte.</p>
+            </section>
+          </aside>
+        </div>
+        <div class="phase-banner" id="phaseBanner" aria-live="polite" aria-hidden="true">
+          <span id="phaseBannerEyebrow">Nueva fase</span>
+          <strong id="phaseBannerTitle">Fondo</strong>
+        </div>
+      </section>
+
+      <section class="screen" id="resultScreen" aria-labelledby="resultTitle">
+        <div class="panel result-panel">
+          <div class="score-orb" id="scoreOrb">0</div>
+          <p class="eyebrow" id="rarityLabel">rareza</p>
+          <h2 id="resultTitle">Perfume listo</h2>
+          <p class="aura-line" id="resultAura">Aura serena</p>
+          <p id="resultFeedback">El cliente espera.</p>
+          <p class="reaction-line" id="resultReaction">Sonríe con cuidado.</p>
+          <div class="result-showcase">
+            <div class="final-bottle">
+              <img id="finalBottleImg" class="final-bottle-img" src="./assets/images/Frasco_transparent.png" alt="" aria-hidden="true">
+              <span class="bottle-sprayer"></span>
+              <span class="bottle-neck"></span>
+              <div class="final-liquid-stack" id="finalLiquid"></div>
+              <div class="olfactory-pyramid bottle-pyramid" id="finalPyramid"></div>
+              <div class="final-orbiters" id="finalOrbiters"></div>
+            </div>
+          </div>
+          <div class="tag-row" id="resultTags"></div>
+          <div class="reward-strip" id="resultRewards"></div>
+          <div class="action-row">
+            <button class="soft-button" id="retryBtn" type="button">Reintentar</button>
+            <button class="main-button" id="nextBtn" type="button">Siguiente pedido</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <section class="pedia-panel" id="pediaPanel" aria-hidden="true">
+    <div class="pedia-card">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Colección</p>
+          <h2>Perfupedia</h2>
+        </div>
+        <button class="ghost-button" id="closePediaBtn" type="button">Cerrar</button>
+      </div>
+      <div class="pedia-tabs" id="pediaTabs"></div>
+      <div class="pedia-grid" id="pediaGrid"></div>
+    </div>
+  </section>
+
+  <section class="captive-panel" id="captivePanel" aria-hidden="true">
+    <div class="captive-card">
+      <div class="section-head">
+        <div>
+          <h2>Mixer de Cautivos</h2>
+        </div>
+        <button class="ghost-button" id="closeCaptiveBtn" type="button">Cerrar</button>
+      </div>
+      <p class="fineprint">Junta materias. Las recetas son secretas.</p>
+      <div class="captive-slots" id="captiveSlots"></div>
+      <div class="action-row compact captive-action-row">
+        <button class="soft-button" id="clearCaptiveBtn" type="button">Vaciar</button>
+        <button class="main-button" id="mixCaptiveBtn" type="button">Mezclar</button>
+      </div>
+      <div class="captive-result" id="captiveResult">Toca materias para probar.</div>
+      <h3>Materia prima</h3>
+      <div class="raw-grid" id="rawGrid"></div>
+      <h3>Cautivos</h3>
+      <div class="captive-grid" id="captiveGrid"></div>
+    </div>
+  </section>
+
+  <section class="elaborations-panel" id="elaborationsPanel" aria-hidden="true">
+    <div class="elaborations-card">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Archivo</p>
+          <h2>Elaboraciones</h2>
+        </div>
+        <button class="ghost-button" id="closeElaborationsBtn" type="button">Cerrar</button>
+      </div>
+      <p class="fineprint">Solo aparecen pedidos completados. Sin spoilers.</p>
+      <div class="elaborations-list" id="elaborationsList"></div>
+    </div>
+  </section>
+
+  <section class="family-panel" id="familyPanel" aria-hidden="true">
+    <div class="family-card">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Lore</p>
+          <h2>La Familia del Mezclador</h2>
+        </div>
+        <button class="ghost-button" id="closeFamilyBtn" type="button">Cerrar</button>
+      </div>
+      <div class="family-scroll" id="familyContent"></div>
+    </div>
+  </section>
+
+  <div class="guide-bubble" id="guideBubble" aria-live="polite" aria-hidden="true">
+    <div class="guide-maggic">Maggic</div>
+    <p class="eyebrow" id="guideEyebrow">Pista</p>
+    <strong id="guideTitle">Empieza suave</strong>
+    <p id="guideText">Mira el pedido y mezcla por sensaciones.</p>
+    <button class="soft-button" id="guideOkBtn" type="button">Vale</button>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./js/assets.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/colorMix.js"></script>
+  <script src="./js/particles.js"></script>
+  <script src="./js/audio.js"></script>
+  <script src="./js/systems.js"></script>
+  <script src="./js/cautives.js"></script>
+  <script src="./js/maggic.js"></script>
+  <script src="./js/familyLore.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>La Familia del Mezclador</title>
+  <link rel="icon" type="image/x-icon" href="./assets/images/kawaii_mixer_game_logo.ico">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: #342414;
+      font-family: "Trebuchet MS", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      background: #c48948 url("./assets/images/Fondo.png") center / cover fixed no-repeat;
+    }
+    img { display: block; max-width: 100%; }
+    .page {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(18px, env(safe-area-inset-bottom));
+    }
+    .hero, .origin-card, .note-card, .story-card {
+      border: 1px solid rgba(91, 54, 24, .18);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(255,255,255,.72), transparent 34%),
+        rgba(255, 249, 231, .84);
+      box-shadow: 0 14px 24px rgba(67, 38, 16, .16), inset 0 0 0 1px rgba(255,255,255,.42);
+    }
+    .hero {
+      display: grid;
+      gap: 14px;
+      justify-items: center;
+      padding: 16px;
+      text-align: center;
+    }
+    .logo { width: min(320px, 80vw); filter: drop-shadow(0 14px 18px rgba(67, 38, 16, .22)); }
+    .crest {
+      width: min(520px, 96%);
+      clip-path: circle(49% at 50% 50%);
+      filter: drop-shadow(0 18px 22px rgba(67, 38, 16, .22));
+    }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(2rem, 9vw, 3.4rem); line-height: 1; }
+    h2 { font-size: clamp(1.35rem, 5vw, 2rem); }
+    p { line-height: 1.42; }
+    .eyebrow {
+      color: #f45d8f;
+      font-size: .78rem;
+      font-weight: 1000;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .section { margin-top: 14px; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 2px 10px;
+    }
+    .origin-grid, .note-grid, .story-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .origin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .note-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .story-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .origin-card, .note-card {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 142px;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .origin-card img {
+      width: 110px;
+      height: 126px;
+      object-fit: cover;
+      object-position: center top;
+      border: 2px solid rgba(255,255,255,.7);
+      border-radius: 8px;
+    }
+    .note-card { position: relative; }
+    .note-card::before {
+      content: "";
+      position: absolute;
+      inset: -45% auto auto -22%;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--note-color), transparent 70%);
+      opacity: .24;
+    }
+    .note-card img {
+      position: relative;
+      z-index: 1;
+      width: 104px;
+      aspect-ratio: 1;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 12px rgba(67, 38, 16, .16));
+    }
+    .copy { position: relative; z-index: 1; display: grid; gap: 6px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+    .pill {
+      padding: 3px 7px;
+      color: #342414;
+      font-size: .72rem;
+      font-weight: 800;
+      border: 1px solid rgba(91, 54, 24, .14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.6);
+    }
+    .small { color: #765b3a; font-size: .78rem; }
+    .passive { color: #875124; font-size: .76rem; font-weight: 900; }
+    .story-card { padding: 12px; display: grid; gap: 6px; }
+    @media (max-width: 680px) {
+      .origin-grid, .note-grid, .story-grid { grid-template-columns: 1fr; }
+      .origin-card, .note-card { grid-template-columns: 92px 1fr; }
+      .origin-card img { width: 92px; height: 110px; }
+      .note-card img { width: 92px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <img class="logo" src="./assets/images/Logo.png" alt="Kawaii Mixer Game">
+      <img class="crest" src="./assets/images/La Familia del Mezclador.png" alt="La Familia del Mezclador">
+      <p class="eyebrow">Cosmopedia</p>
+      <h1>La Familia del Mezclador</h1>
+      <p>Historia, linajes y secretos suaves de las Massnotas nacidas de COSMO.</p>
+    </section>
+    <div id="previewContent"></div>
+  </main>
+
+  <script src="./js/assets.js"></script>
+  <script src="./js/familyLore.js"></script>
+  <script>
+    const content = document.getElementById("previewContent");
+    const lore = window.KM.familyLore;
+    const origin = lore.origin.map((item) => `
+      <article class="origin-card">
+        <img src="${window.KM.asset(item.image)}" alt="${item.title}">
+        <div class="copy">
+          <span class="eyebrow">${item.tag}</span>
+          <h3>${item.title}</h3>
+          <p>${item.text}</p>
+        </div>
+      </article>
+    `).join("");
+    const notes = lore.notes.map((item) => {
+      const note = window.KM.noteById[item.id] || {};
+      const name = item.name || item.id;
+      return `
+        <article class="note-card" style="--note-color:${note.color || "#f4ad41"}">
+          <img src="${window.KM.asset(item.image)}" alt="${name}">
+          <div class="copy">
+            <span class="eyebrow">${window.KM.familyLabel[note.family] || item.lineage}</span>
+            <h3>${name}</h3>
+            <div class="pills"><span class="pill">${item.lineage}</span><span class="pill">${item.role}</span><span class="pill">${item.vibe}</span></div>
+            <p>${item.text}</p>
+            <p class="small">${item.bond}</p>
+            <p class="passive">${note.passive || ""}</p>
+          </div>
+        </article>
+      `;
+    }).join("");
+    const stories = lore.stories.map((story) => `
+      <article class="story-card"><h3>${story.title}</h3><p>${story.text}</p></article>
+    `).join("");
+    content.innerHTML = `
+      <section class="section">
+        <div class="section-head"><span class="eyebrow">Origen</span><h2>COSMO y la Burbuja</h2></div>
+        <div class="origin-grid">${origin}</div>
+      </section>
+      <section class="section">
+        <div class="section-head"><span class="eyebrow">Massnotas</span><h2>Linajes vivos</h2></div>
+        <div class="note-grid">${notes}</div>
+      </section>
+      <section class="section">
+        <div class="section-head"><span class="eyebrow">Taller</span><h2>Historias pequeñas</h2></div>
+        <div class="story-grid">${stories}</div>
+      </section>
+    `;
+  </script>
+</body>
+</html>
