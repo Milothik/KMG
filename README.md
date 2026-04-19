@@ -1,41 +1,72 @@
 # Kawaii Mixer Game
 
-Prototipo mobile-first en HTML/CSS/JS sin dependencias de runtime.
+Juego mobile-first de mezcla de perfumes con estética kawaii, memoria visual y progresión por pedidos. El jugador recoge gotas en un memory sencillo, combina Massnotas en el panel de juego y construye acordes olfativos por fases para responder al pedido de cada clienta.
 
-## Ejecutar
+> Estado: versión jugable en pre-release para pruebas privadas.
+
+## Capturas
+
+| Inicio | Menú |
+| --- | --- |
+| ![Pantalla inicial](docs/screenshots/01-home.png) | ![Menú principal](docs/screenshots/02-menu.png) |
+
+| Memory | Mixer |
+| --- | --- |
+| ![Pantalla de memory](docs/screenshots/03-memory.png) | ![Panel de mezcla](docs/screenshots/04-mixing.png) |
+
+## Release actual
+
+- Versión pública: `v1.0.0`
+- Android corregido: `versionName 1.0.2`, `versionCode 3`
+- Release: [GitHub Releases](https://github.com/Milothik/KMG/releases/tag/v1.0.0)
+- APK recomendado para pruebas: `kawaii-mixer-game-release.apk`
+
+La build de Android ya incluye los archivos web empaquetados dentro de `android_asset/www`, los datos de niveles necesarios para el botón `Jugar` y el icono de la app. Si Android muestra "Aplicación no instalada" al actualizar desde una APK antigua, conviene desinstalar la versión previa y volver a instalar la APK de release.
+
+## Qué incluye
+
+- Pantalla inicial con botón `Jugar`, acceso a Perfupedia, Mixer de Cautivos y Elaboraciones.
+- Loop principal de pedido, memory, panel de mezcla, lectura aromática y resultado.
+- Tres fases de creación: `Fondo`, `Corazón` y `Salida`.
+- Massnotas con notas aromáticas distintas, solvente y sistema Maggic.
+- Memory táctil de gotas para conseguir materia prima antes de mezclar.
+- Bubble Chart con lectura de acorde actual.
+- Perfupedia persistente con progreso guardado en `localStorage`.
+- Mixer de Cautivos con recetas ocultas y recompensas consumibles.
+- Controles separados para música y efectos.
+- Assets visuales integrados para interfaz, paneles, botones y fondo de juego.
+
+## Ejecutar en local
 
 ```bash
 npm start
 ```
 
-Abre `http://localhost:5173`.
+Abre `http://localhost:5173` en el navegador. Para probarlo en móvil dentro de la misma red, usa la IP local del ordenador con el puerto `5173`.
 
-También puedes abrir `dist/kawaii-mixer-standalone.html` después de generar el standalone:
+También puedes generar el standalone:
 
 ```bash
 npm run build
 ```
 
-## Qué incluye
+Después de la build puedes abrir `dist/kawaii-mixer-standalone.html`.
 
-- Core loop: pedido, memory, Bubble Chart, resultado y siguiente pedido.
-- `data/levels.json` con 10 niveles editables.
-- Pointer Events con `setPointerCapture` para drag táctil.
-- Burbujas con llenado líquido, ojos por nota y mezcla de color en linear-light sRGB.
-- Partículas Canvas con `requestAnimationFrame`.
-- Música ambiental Forest Bubbles con botón de sonido persistente.
-- Maggic contextual: pista, materia extra, solvente obligatorio o cierre sin bonus.
-- Perfupedia persistente con `localStorage`.
-- Pedidos emocionales con clientes de personalidad propia.
-- Aura del perfume, reacciones variadas, riesgo suave, refinado y último toque.
-- Eventos sorpresa y secretos de alquimia registrables en colección.
-- Tres fases de creación: Fondo, Corazón y Salida, con fusión visual por fase.
-- Mixer de Cautivos: recompensas de materia prima, recetas ocultas y cautivos consumibles para el último toque.
-- Solvente como Massnota ilimitada: al mezclarse en una burbuja rebaja la nota final de esa burbuja.
-- Burbujas numerosas por fase y sobredosificación: pasarse penaliza, tres excesos reinician la ronda.
-- Resultado final con frasco por capas y pirámide olfativa.
+## Android
 
-## Estructura
+El proyecto Android se genera con Capacitor desde los archivos web del juego.
+
+```powershell
+.\android-wrapper\build-apk.ps1
+```
+
+Las APK finales de pruebas se guardan en la carpeta `ESTO ES LA APP`. La firma de release usa una keystore local privada, por lo que no se suben credenciales al repositorio.
+
+## iOS
+
+El repositorio incluye un workflow de Codemagic para generar una IPA sin firma comercial, pensada para pruebas con herramientas como Sideloadly. Para distribuir en App Store, TestFlight o instalar de forma oficial en iPhone hace falta una cuenta de Apple Developer y perfiles de firma válidos.
+
+## Estructura principal
 
 ```text
 index.html
@@ -49,7 +80,14 @@ js/systems.js
 js/cautives.js
 js/maggic.js
 js/main.js
-assets/images/*.png
+assets/images/
+docs/screenshots/
+docs/release/
+android-wrapper/
 build.js
 server.js
 ```
+
+## Notas de desarrollo
+
+El juego está construido en HTML, CSS y JavaScript sin dependencias de runtime para el cliente. La app se empaqueta para Android con Capacitor y mantiene los datos jugables en archivos locales para que funcione sin servidor externo.
