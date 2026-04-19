@@ -60,7 +60,6 @@ $LinkArgs = @(
   "-o", $UnsignedApk,
   "--manifest", (Join-Path $WorkMain "AndroidManifest.xml"),
   "-I", $PlatformJar,
-  "-A", (Join-Path $WorkMain "assets"),
   "--java", $Generated,
   "--min-sdk-version", "23",
   "--target-sdk-version", "36",
@@ -93,6 +92,22 @@ try {
   if ($LASTEXITCODE -ne 0) { throw "jar falló al añadir classes.dex" }
 } finally {
   Pop-Location
+}
+
+Push-Location $WorkMain
+try {
+  & $Jar uf $UnsignedApk "assets"
+  if ($LASTEXITCODE -ne 0) { throw "jar falló al añadir assets" }
+} finally {
+  Pop-Location
+}
+
+$ApkEntries = & $Jar tf $UnsignedApk
+if ($ApkEntries -notcontains "assets/www/index.html") {
+  throw "El APK no contiene assets/www/index.html"
+}
+if ($ApkEntries | Where-Object { $_ -like "assets/www\*" }) {
+  throw "El APK contiene assets con barras invertidas de Windows"
 }
 
 & $Zipalign -f -p 4 $UnsignedApk $AlignedApk
