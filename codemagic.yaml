@@ -23,21 +23,75 @@ workflows:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
+      - name: Install iOS pods
+        script: |
+          if [ -f ios/App/Podfile ]; then
+            cd ios/App
+            pod install
+            cd ../..
+          fi
       - name: Build unsigned simulator app
         script: |
-          set -o pipefail
-          mkdir -p /tmp/xcodebuild_logs build/ios/simulator
+          set -euo pipefail
+          mkdir -p /tmp/xcodebuild_logs build/ios/simulator build/ios/DerivedData
+
+          if [ -d "$XCODE_WORKSPACE" ]; then
+            BUILD_FILE_FLAG="-workspace"
+            BUILD_FILE_PATH="$XCODE_WORKSPACE"
+          else
+            BUILD_FILE_FLAG="-project"
+            BUILD_FILE_PATH="ios/App/App.xcodeproj"
+          fi
+
+          xcodebuild "$BUILD_FILE_FLAG" "$BUILD_FILE_PATH" \
+            -scheme "$XCODE_SCHEME" \
+            -showdestinations > /tmp/xcodebuild_logs/destinations.log || true
+
+          DESTINATION_ID=$(python3 <<'PY'
+          import json
+          import subprocess
+          import sys
+
+          raw = subprocess.check_output(
+              ["xcrun", "simctl", "list", "devices", "available", "-j"],
+              text=True,
+          )
+          data = json.loads(raw)
+          devices = []
+          for runtime_devices in data.get("devices", {}).values():
+              for device in runtime_devices:
+                  if device.get("isAvailable") and device.get("name", "").startswith("iPhone"):
+                      devices.append(device)
+
+          for preferred in ("iPhone 16 Pro", "iPhone 15 Pro", "iPhone 14 Pro"):
+              for device in devices:
+                  if device.get("name") == preferred:
+                      print(device.get("udid", ""))
+                      raise SystemExit
+
+          print(devices[0].get("udid", "") if devices else "")
+          PY
+          )
+
+          if [ -n "$DESTINATION_ID" ]; then
+            DESTINATION="id=$DESTINATION_ID"
+          else
+            DESTINATION="generic/platform=iOS Simulator"
+          fi
+          echo "Using simulator destination: $DESTINATION"
+
           xcodebuild build \
-            -workspace "$XCODE_WORKSPACE" \
+            "$BUILD_FILE_FLAG" "$BUILD_FILE_PATH" \
             -scheme "$XCODE_SCHEME" \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "$DESTINATION" \
+            -derivedDataPath build/ios/DerivedData \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             | tee /tmp/xcodebuild_logs/ios-simulator.log
-          APP_PATH=$(find "$HOME/Library/Developer/Xcode/DerivedData" -path "*/Build/Products/Debug-iphonesimulator/*.app" -type d | head -n 1)
+          APP_PATH=$(find build/ios/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 1 -name "*.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
             echo "No simulator .app artifact found"
             exit 1
@@ -45,5 +99,5 @@ workflows:
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" build/ios/simulator/KawaiiMixer-simulator.app.zip
     artifacts:
       - build/ios/simulator/*.zip
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - build/ios/DerivedData/Build/Products/**/*.app
       - /tmp/xcodebuild_logs/*.log
