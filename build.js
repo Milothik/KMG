@@ -61,7 +61,9 @@ function buildAssetMap() {
 }
 
 function stripExternalScripts(body) {
-  return body.replace(/\s*<script\s+src="\.\/js\/[^"]+"><\/script>\s*/g, "\n");
+  return body
+    .replace(/\s*<script\s+src="\.\/data\/levels\.js"><\/script>\s*/g, "\n")
+    .replace(/\s*<script\s+src="\.\/js\/[^"]+"><\/script>\s*/g, "\n");
 }
 
 function main() {
