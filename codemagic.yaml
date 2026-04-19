@@ -1,4 +1,75 @@
 workflows:
+  ios-unsigned-device-ipa:
+    name: Unsigned iPhone IPA for Sideloadly
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      node: latest
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: com.kawaiimixer.game
+        XCODE_WORKSPACE: ios/App/App.xcworkspace
+        XCODE_SCHEME: App
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm ci || npm install
+      - name: Prepare web assets
+        script: |
+          npm run prepare:ios-web
+      - name: Generate Capacitor iOS project
+        script: |
+          rm -rf ios
+          npx cap add ios
+          npx cap sync ios
+      - name: Install iOS pods
+        script: |
+          if [ -f ios/App/Podfile ]; then
+            cd ios/App
+            pod install
+            cd ../..
+          fi
+      - name: Build unsigned device app
+        script: |
+          set -euo pipefail
+          mkdir -p /tmp/xcodebuild_logs build/ios/unsigned-device build/ios/DeviceDerivedData
+
+          if [ -d "$XCODE_WORKSPACE" ]; then
+            BUILD_FILE_FLAG="-workspace"
+            BUILD_FILE_PATH="$XCODE_WORKSPACE"
+          else
+            BUILD_FILE_FLAG="-project"
+            BUILD_FILE_PATH="ios/App/App.xcodeproj"
+          fi
+
+          xcodebuild "$BUILD_FILE_FLAG" "$BUILD_FILE_PATH" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/ios/DeviceDerivedData \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee /tmp/xcodebuild_logs/ios-device-unsigned.log
+
+          APP_PATH=$(find build/ios/DeviceDerivedData/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No unsigned iPhone .app artifact found"
+            exit 1
+          fi
+
+          rm -rf build/ios/unsigned-device/Payload
+          mkdir -p build/ios/unsigned-device/Payload
+          cp -R "$APP_PATH" build/ios/unsigned-device/Payload/
+          cd build/ios/unsigned-device
+          zip -qry KawaiiMixer-unsigned-for-sideloadly.ipa Payload
+    artifacts:
+      - build/ios/unsigned-device/*.ipa
+      - build/ios/DeviceDerivedData/Build/Products/**/*.app
+      - /tmp/xcodebuild_logs/*.log
+
   ios-simulator-build:
     name: iOS Simulator Build
     max_build_duration: 60
