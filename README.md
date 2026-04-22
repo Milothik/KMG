@@ -12,7 +12,7 @@ Juego mobile-first de mezcla de perfumes con estética kawaii, memoria visual y 
 
 | Memory | Mixer |
 | --- | --- |
-| ![Pantalla de memory](docs/screenshots/03-memory.png) | ![Panel de mezcla](docs/screenshots/04-mixing.png) |
+| ![Pantalla de memory](docs/screenshots/03-memory.jpg) | ![Panel de mezcla](docs/screenshots/04-mixing.jpg) |
 
 ## Release actual
 
