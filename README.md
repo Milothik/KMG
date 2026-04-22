@@ -18,7 +18,7 @@ Juego mobile-first de mezcla de perfumes con estética kawaii, memoria visual y 
 
 - Versión pública: `v1.5.0`
 - Android corregido: `versionName 1.0.2`, `versionCode 3`
-- Release: [GitHub Releases](https://github.com/Milothik/KMG/releases/tag/v1.0.0)
+- Release: [GitHub Releases](https://github.com/Milothik/KMG/releases/tag/v1.5.0)
 - APK recomendado para pruebas: `kawaii-mixer-game-debug.apk`
 
 La build de Android ya incluye los archivos web empaquetados dentro de `android_asset/www`, los datos de niveles necesarios para el botón `Jugar` y el icono de la app. Si Android muestra "Aplicación no instalada" al actualizar desde una APK antigua, conviene desinstalar la versión previa y volver a instalar la APK de release.
@@ -66,7 +66,7 @@ Las APK finales de pruebas se guardan en la carpeta `ESTO ES LA APP`. La firma d
 
 El repositorio incluye un workflow de Codemagic para generar una IPA sin firma comercial, pensada para pruebas con herramientas como Sideloadly. Para distribuir en App Store, TestFlight o instalar de forma oficial en iPhone hace falta una cuenta de Apple Developer y perfiles de firma válidos.
 
-## Estructura principal
+## Estructura principal de v1.0.0
 
 ```text
 index.html
@@ -89,5 +89,5 @@ server.js
 ```
 
 ## Notas de desarrollo
-
+VIBECODING - CODEX
 El juego está construido en HTML, CSS y JavaScript sin dependencias de runtime para el cliente. La app se empaqueta para Android con Capacitor y mantiene los datos jugables en archivos locales para que funcione sin servidor externo.
